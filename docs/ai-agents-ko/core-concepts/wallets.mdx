@@ -1,68 +1,63 @@
 ---
 title: "지갑"
-description: "에이전트가 자금을 보유하고 트랜잭션을 승인하려면 지갑이 필요합니다. 전용 지갑이 중요한 이유와 적합한 옵션을 알아보세요."
+description: "에이전트가 자금을 보유하고, 결제를 전송하고, 메시지에 서명할 수 있도록 설정하기"
 ---
 
-AI 에이전트가 온체인에서 활동하려면 자체적인 지갑이 필요합니다. 지갑은 에이전트가 스테이블코인과 토큰을 보유하고, 결제를 전송하며, 트랜잭션에 서명할 수 있는 핵심 인프라입니다.
+온체인 지갑은 에이전트가 자금을 보유하고, 트랜잭션을 승인하고, 메시지에 서명할 수 있게 해줍니다. 지갑이 없으면 에이전트는 데이터를 읽을 수는 있지만, 서비스 비용을 지불하거나 결제를 받거나 신원을 증명할 수 없습니다.
 
-## 에이전트에게 전용 지갑이 필요한 이유
+<iframe
+  className="w-full aspect-video rounded-xl"
+  src="https://www.youtube.com/embed/G3yn8g4mf-s?si=jRsLzFPS_cui9-gF"
+  title="Base의 에이전트 지갑"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowFullScreen
+></iframe>
 
-에이전트는 사람의 지갑을 직접 사용하는 것이 아니라 자체적인 전용 지갑을 가져야 합니다. 이유는 다음과 같습니다:
+## 에이전트에 전용 지갑이 필요한 이유
 
-- **자율성**: 에이전트가 사람의 승인 없이도 트랜잭션을 실행할 수 있습니다
-- **보안 격리**: 에이전트의 자금이 사용자의 개인 자금과 분리됩니다
-- **권한 제어**: 에이전트의 지출 한도와 허용된 작업을 프로그래밍 방식으로 설정할 수 있습니다
-- **추적성**: 모든 에이전트 트랜잭션이 별도로 기록되어 감사가 용이합니다
+AI 에이전트는 프롬프트를 통해 임의의 개인키를 생성하여 직접 지갑을 만들 수도 있습니다. 하지만 이 방법은 안전하지 않습니다. 그 이유는 다음과 같습니다.
+
+- 개인키가 에이전트의 대화 컨텍스트에 노출되어 로그, 캐시, 미들웨어를 통해 유출될 수 있습니다
+- 에이전트의 프롬프트 기록에 접근할 수 있는 모든 시스템이 키를 추출할 수 있습니다
+- 키가 유출되면 지갑의 모든 자금이 영구적으로 손실됩니다
+
+전용 지갑 서비스는 에이전트의 런타임과 분리된 안전한 인프라에서 키를 관리하여 이 문제를 해결합니다. 에이전트는 개인키를 직접 보지 않고도 트랜잭션을 요청할 수 있습니다.
 
 ## 지갑 옵션
 
-### CDP Wallet
+<Tabs>
+  <Tab title="BANKR 지갑">
+    **개요:** OpenClaw에서 실행되는 에이전트를 위한 지갑 서비스입니다. BANKR이 개인키를 관리하고, 지갑 액션을 에이전트가 호출할 수 있는 스킬로 제공합니다.
 
-Coinbase Developer Platform(CDP)에서 제공하는 지갑 인프라입니다. Trusted Execution Environment(TEE)에서 보안을 유지하는 비수탁형(non-custodial) 지갑을 제공합니다.
+    **적합한 경우:** 사전 빌드된 스킬로 빠른 지갑 연동이 필요한 OpenClaw 또는 BANKR 기반 에이전트.
 
-**주요 특징:**
-- 엔터프라이즈급 보안
-- 내장 KYT(Know Your Transaction) 스크리닝
-- x402 프로토콜과의 네이티브 통합
-- 가스리스(gasless) 트랜잭션 지원
+    **작동 방식:** BANKR 지갑 스킬을 설치하면 에이전트가 잔액 조회, 토큰 전송, <Tooltip tip="스마트 컨트랙트를 통해 대출·거래 등의 금융 서비스를 제공하는 프로토콜">DeFi 프로토콜</Tooltip> 상호작용 기능을 갖추게 됩니다. 키는 BANKR이 저장하고 관리합니다.
 
-```typescript
-// CDP Wallet 생성 예시
-import { AgentKit } from "@coinbase/agentkit";
+    [시작하기 →](https://github.com/BankrBot/openclaw-skills)
+  </Tab>
 
-const agentKit = await AgentKit.from({
-  cdpApiKeyName: process.env.CDP_API_KEY_NAME,
-  cdpApiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY,
-});
-```
+  <Tab title="CDP 에이전트 지갑">
+    **개요:** AI 에이전트를 위한 Coinbase의 지갑 인프라입니다. Coinbase 인프라를 통한 엔터프라이즈급 키 보안과 API 기반 지갑 관리를 제공합니다.
 
-### 서드파티 지갑 Provider
+    **적합한 경우:** Coinbase 수준의 보안이 적용된 프로덕션 지갑 인프라가 필요한 Agent SDK 기반 에이전트.
 
-Agent SDK는 지갑에 구애받지 않으므로(wallet-agnostic), 다음과 같은 다른 provider도 사용할 수 있습니다:
+    **작동 방식:** CDP API를 통해 지갑을 생성합니다. 에이전트가 API로 트랜잭션을 요청하면 CDP가 서명과 브로드캐스팅을 처리합니다. 키는 Coinbase의 보안 엔클레이브에서 관리되며 에이전트가 직접 접근하지 않습니다.
 
-- **Privy** — 소셜 로그인과 임베디드 지갑에 특화
-- **Viem** — 저수준 블록체인 상호작용을 위한 경량 라이브러리
+    [시작하기 →](https://docs.cdp.coinbase.com/agentic-wallet/quickstart)
+  </Tab>
+</Tabs>
 
-### Smart Wallet (계정 추상화)
+## 지갑으로 할 수 있는 것
 
-Smart Contract Wallet은 에이전트에게 추가적인 유연성을 제공합니다:
+에이전트가 지갑을 갖추면 다음과 같은 작업이 가능합니다.
 
-- **다중 키 아키텍처**: 소유자 키와 에이전트 키를 분리하여 보안을 강화합니다
-- **프로그래밍 가능한 가드레일**: Smart Contract 수준에서 지출 한도와 허용된 작업을 정의합니다
-- **배치 트랜잭션**: 여러 작업을 하나의 트랜잭션으로 묶어 실행합니다
-
-## 보안 모범 사례
-
-<Warning>
-프로덕션 환경에서는 반드시 지갑 보안에 주의하세요.
-</Warning>
-
-- 프라이빗 키를 코드에 하드코딩하지 마세요
-- 환경 변수나 시크릿 관리 서비스를 사용하세요
-- 에이전트의 지출 한도를 적절히 설정하세요
-- 정기적으로 에이전트 트랜잭션을 모니터링하세요
-- 테스트넷(Base Sepolia)에서 충분히 테스트한 후 메인넷으로 이동하세요
+- **<Tooltip tip="미국 달러 등 안정적인 자산에 연동된 암호화폐(예: USDC). 1 USDC는 항상 1달러와 같도록 설계됩니다.">스테이블코인</Tooltip> 보유**: USDC 등 토큰을 수신하고 저장
+- **결제 송수신**: 다른 지갑으로 자금 전송, API 이용료 지불, 서비스 대금 수령
+- **메시지 서명**: 특정 메시지나 요청이 에이전트로부터 온 것임을 암호학적으로 증명 (신원 확인에 활용)
+- **프로토콜 상호작용**: <Tooltip tip="온체인에 배포되어 조건이 충족되면 자동으로 실행되는 프로그램. 토큰 스왑부터 대출까지 다양한 기능을 제공합니다.">스마트 컨트랙트</Tooltip>를 호출하여 토큰 스왑, 유동성 공급, 기타 온체인 서비스 이용
 
 ## 다음 단계
 
-지갑을 설정한 후에는 [결제와 트랜잭션](/ko/ai-agents/core-concepts/payments-and-transactions)을 통해 에이전트가 서비스 비용을 지불하고 온체인 액션을 수행하는 방법을 알아보세요.
+<Card title="결제 및 트랜잭션" icon="arrow-right" href="/ai-agents-ko/core-concepts/payments-and-transactions">
+  에이전트가 서비스 비용을 지불하고 온체인 액션을 실행하는 방법을 알아보세요.
+</Card>
