@@ -33,17 +33,17 @@
           {
             "group": "소개",
             "pages": [
-              "ai-agents-ko"
+              "ai-agents-ko/index"
             ]
           },
           {
             "group": "핵심 개념",
             "pages": [
-              "agent-frameworks",
-              "wallets",
-              "payments-and-transactions",
-              "identity-verification-auth",
-              "agent-apps"
+              "ai-agents-ko/core-concepts/agent-frameworks",
+              "ai-agents-ko/core-concepts/wallets",
+              "ai-agents-ko/core-concepts/payments-and-transactions",
+              "ai-agents-ko/core-concepts/identity-verification-auth",
+              "ai-agents-ko/core-concepts/agent-apps"
             ]
           }
         ]
