@@ -45,6 +45,12 @@
               "ai-agents-ko/core-concepts/identity-verification-auth",
               "ai-agents-ko/core-concepts/agent-apps"
             ]
+          },
+          {
+            "group": "가이드",
+            "pages": [
+              "ai-agents-ko/guides/openclaw-setup"
+            ]
           }
         ]
       }
