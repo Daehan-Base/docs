@@ -28,6 +28,26 @@
   "navigation": {
     "tabs": [
       {
+        "tab": "Based Builder 가이드",
+        "groups": [
+          {
+            "group": "소개",
+            "pages": [
+              "based-builder-ko/index"
+            ]
+          },
+          {
+            "group": "온보딩 단계",
+            "pages": [
+              "based-builder-ko/step-1-screening",
+              "based-builder-ko/step-2-onchain-identity",
+              "based-builder-ko/step-3-product-strategy",
+              "based-builder-ko/step-4-launch"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "AI 에이전트",
         "groups": [
           {
