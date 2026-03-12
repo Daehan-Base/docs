@@ -39,7 +39,7 @@
           {
             "group": "온보딩 단계",
             "pages": [
-              "based-builder-ko/step-1-screening",
+              "based-builder-ko/step-1-alignment",
               "based-builder-ko/step-2-onchain-identity",
               "based-builder-ko/step-3-product-strategy",
               "based-builder-ko/step-4-launch"
